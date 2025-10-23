@@ -1,9 +1,29 @@
 {
-  "name": "travel/backoffice",
-  "description": "Backoffice system for travel agency",
-  "require": {
-    "php": ">=7.4",
-    "phpmailer/phpmailer": "^6.8",
-    "predis/predis": "2.2"
-  }
+    "name": "travel/backoffice",
+    "description": "Backoffice system for travel agency",
+    "require": {
+        "php": ">=7.4",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "phpmailer/phpmailer": "^6.8",
+        "predis/predis": "2.2"
+    },
+    "require-dev": {
+        "ext-redis": "*"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": [
+            "@php scripts/check_php_compatibility.php",
+            "@php scripts/check_test_db.php",
+            "@php scripts/role_test.php",
+            "@php scripts/simple_test.php"
+        ]
+    }
 }
