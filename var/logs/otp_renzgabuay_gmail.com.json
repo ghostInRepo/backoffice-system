@@ -1,0 +1,7 @@
+{
+    "to": "renzgabuay@gmail.com",
+    "subject": "Your Backoffice OTP Code",
+    "otp": "443923",
+    "body": "\r\n\r\n\r\n  \r\n  OTP Code\r\n  \r\n    .card { font-family: Arial, sans-serif; border:1px solid #eee; padding:20px; border-radius:8px; }\r\n    .otp { font-size:28px; font-weight:bold; color:#2b6cb0; }\r\n  \r\n\r\n\r\n  \r\n    Hello,\r\n    Your OTP code is:\r\n    443923\r\n    This code is valid for 5 minutes.\r\n  \r\n\r\n\r\n",
+    "timestamp": 1761226782
+}

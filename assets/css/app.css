@@ -1,0 +1,44 @@
+:root {
+  --bg: #f6f8fa;
+  --panel: #ffffff;
+  --text: #0f172a;
+  --muted: #6b7280;
+}
+body.theme-dark {
+  --bg: #0b1220;
+  --panel: #0f1724;
+  --text: #e6eef8;
+  --muted: #9aa6b2;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: Inter, Segoe UI, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+}
+.sidebar {
+  width: 220px;
+  background: var(--panel);
+  height: 100vh;
+  position: fixed;
+  padding: 20px;
+}
+.main {
+  margin-left: 240px;
+  padding: 20px;
+}
+.card {
+  background: var(--panel);
+  padding: 16px;
+  border-radius: 8px;
+  margin: 8px;
+  display: inline-block;
+}
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

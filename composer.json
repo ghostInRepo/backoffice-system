@@ -1,0 +1,9 @@
+{
+  "name": "travel/backoffice",
+  "description": "Backoffice system for travel agency",
+  "require": {
+    "php": ">=7.4",
+    "phpmailer/phpmailer": "^6.8",
+    "predis/predis": "2.2"
+  }
+}
