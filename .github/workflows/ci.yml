@@ -7,8 +7,19 @@ on:
     branches: [main]
 
 jobs:
-  tests-windows:
-    runs-on: windows-latest
+  test:
+    name: PHP ${{ matrix.php }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["7.4", "8.0", "8.1", "8.2"]
+        os: [windows-latest, ubuntu-latest]
+        exclude:
+          # Exclude older PHP versions on Windows if they cause issues
+          - os: windows-latest
+            php: "7.4"
 
     services:
       mysql:
@@ -24,16 +35,40 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up PHP
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.2"
-          extensions: pdo_mysql
+          php-version: ${{ matrix.php }}
+          extensions: pdo_mysql, redis
+          coverage: none
+          tools: composer
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist
 
       - name: Initialize test database
+        if: runner.os == 'Windows'
         run: |
           mysql -h 127.0.0.1 -u root -pci-test-pass travel_backoffice_test < db/schema.sql
         shell: pwsh
+
+      - name: Initialize test database (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          mysql -h 127.0.0.1 -u root -pci-test-pass travel_backoffice_test < db/schema.sql
+        shell: bash
 
       - name: Check database
         run: php scripts/check_test_db.php
@@ -43,9 +78,22 @@ jobs:
           TEST_DB_USER: "root"
           TEST_DB_PASS: "ci-test-pass"
 
-      - name: Run CI tests (PowerShell)
+      - name: Run CI tests (Windows)
+        if: runner.os == 'Windows'
         run: .\\scripts\\run_ci_tests.ps1
         shell: pwsh
+        env:
+          TEST_ALLOW_LOGIN: "true"
+          APP_ENV: "testing"
+          TEST_DB_HOST: "127.0.0.1"
+          TEST_DB_NAME: "travel_backoffice_test"
+          TEST_DB_USER: "root"
+          TEST_DB_PASS: "ci-test-pass"
+
+      - name: Run CI tests (Linux)
+        if: runner.os == 'Linux'
+        run: ./scripts/run_ci_tests.sh
+        shell: bash
         env:
           TEST_ALLOW_LOGIN: "true"
           APP_ENV: "testing"

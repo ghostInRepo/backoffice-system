@@ -2,6 +2,20 @@
 
 This document describes the environment variables and setup required for running the test suite.
 
+## Requirements
+
+### PHP Version Support
+
+- PHP 7.4 or higher (tested on 7.4, 8.0, 8.1, and 8.2)
+- Required extensions:
+  - pdo_mysql
+  - redis (optional, for caching)
+
+### Operating System Support
+
+- Windows (PowerShell test runner)
+- Linux/Unix (Bash test runner)
+
 ## Required Environment Variables
 
 ### Test Access Control
