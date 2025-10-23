@@ -10,6 +10,16 @@ jobs:
   tests-windows:
     runs-on: windows-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: travel_backoffice_test
+          MYSQL_ROOT_PASSWORD: ci-test-pass
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,6 +28,20 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
+          extensions: pdo_mysql
+
+      - name: Initialize test database
+        run: |
+          mysql -h 127.0.0.1 -u root -pci-test-pass travel_backoffice_test < db/schema.sql
+        shell: pwsh
+
+      - name: Check database
+        run: php scripts/check_test_db.php
+        env:
+          TEST_DB_HOST: "127.0.0.1"
+          TEST_DB_NAME: "travel_backoffice_test"
+          TEST_DB_USER: "root"
+          TEST_DB_PASS: "ci-test-pass"
 
       - name: Run CI tests (PowerShell)
         run: .\\scripts\\run_ci_tests.ps1
@@ -25,3 +49,7 @@ jobs:
         env:
           TEST_ALLOW_LOGIN: "true"
           APP_ENV: "testing"
+          TEST_DB_HOST: "127.0.0.1"
+          TEST_DB_NAME: "travel_backoffice_test"
+          TEST_DB_USER: "root"
+          TEST_DB_PASS: "ci-test-pass"
